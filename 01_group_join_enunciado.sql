@@ -43,10 +43,42 @@ GROUP BY film_id;
 
 
 -- 6:  Lista solo las películas que tienen al menos 5 copias en inventario.
+
+SELECT film_id, title, COUNT(film_id) AS copias
+FROM film
+	JOIN inventory USING(film_id)
+GROUP BY film_id
+HAVING copias >= 5;
+
 -- 7:  Para cada artículo de inventario, cuenta cuántos alquileres se han realizado.
+
+SELECT inventory_id, COUNT(rental_id) AS rental
+FROM inventory
+	JOIN rental USING (inventory_id)
+GROUP BY inventory_id;
+
+
 -- 8:  Para cada cliente, muestra cuántos alquileres ha realizado en total.
+
+SELECT customer_id, CONCAT(first_name, '', last_name) AS nombre, COUNT(rental_id) AS renta
+FROM customer
+	JOIN rental USING(customer_id)
+GROUP BY customer_id;
+
 -- 9:  Lista los clientes con 30 o más alquileres acumulados.
+
+SELECT customer_id, CONCAT(first_name, '', last_name) AS nombre, COUNT(rental_id) AS renta
+FROM customer
+	JOIN rental USING (customer_id)
+GROUP BY customer_id
+HAVING renta >= 30;
+
 -- 10:  Para cada cliente, muestra el total de pagos (suma en euros/dólares) que ha realizado.
+
+SELECT *
+FROM customer
+	JOIN payment USING (customer_id)
+
 -- 11:  Muestra los clientes cuyo importe total pagado es al menos 200.
 -- 12:  Para cada empleado (staff), muestra el número de pagos que ha procesado.
 -- 13:  Para cada empleado, muestra el importe total procesado.
