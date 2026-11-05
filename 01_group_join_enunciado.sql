@@ -5,10 +5,43 @@
 USE sakila;
 
 -- 1:  Para cada actor, muestra el número total de películas en las que aparece; es decir, cuenta cuántas filas de film_actor corresponden a cada actor.
+
+SELECT CONCAT(first_name, '',last_name) AS actor, COUNT(film_id)
+FROM actor 
+		JOIN film_actor USING(actor_id)
+GROUP BY actor_id;
+
 -- 2:  Lista solo los actores que participan en 20 o más películas (umbral alto) con su conteo.
+
+SELECT CONCAT(first_name, '',last_name) AS actor, COUNT(film_id) AS Peliculas_actor
+FROM actor
+		JOIN film_actor USING(actor_id)
+GROUP BY actor_id
+HAVING Peliculas_actor >= 20;
+
 -- 3:  Para cada idioma, indica cuántas películas están catalogadas en ese idioma.
+
+SELECT name, COUNT(film_id) AS Total_peliculas
+FROM film
+	JOIN language USING(language_id)
+GROUP BY name;
+
 -- 4:  Muestra el promedio de duración (length) de las películas por idioma y filtra aquellos idiomas con duración media estrictamente mayor a 110 minutos.
+
+SELECT name, AVG(length) AS promedio_duracion
+FROM film
+	JOIN language USING(language_id)
+GROUP BY name
+HAVING promedio_duracion >= 110;
+
 -- 5:  Para cada película, muestra cuántas copias hay en el inventario.
+
+SELECT film_id, title, COUNT(film_id) AS copias
+FROM film
+	JOIN inventory USING(film_id)
+GROUP BY film_id;
+
+
 -- 6:  Lista solo las películas que tienen al menos 5 copias en inventario.
 -- 7:  Para cada artículo de inventario, cuenta cuántos alquileres se han realizado.
 -- 8:  Para cada cliente, muestra cuántos alquileres ha realizado en total.
