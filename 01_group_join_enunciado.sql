@@ -448,9 +448,43 @@ FROM category
 GROUP BY category_id;
 
 -- 56:  Para cada tienda, suma los importes cobrados en 2006 (vía empleados de esa tienda).
+
+SELECT store_id, SUM(amount) AS revenue_2006
+FROM store
+	JOIN staff USING(store_id)
+    JOIN payment USING(staff_id)
+WHERE YEAR(payment_date) = 2006
+GROUP BY store_id;
+
 -- 57:  Para cada actor, cuenta cuántas películas tienen título de más de 12 caracteres.
+
+SELECT actor_id, CONCAT(first_name, ' ', last_name) AS nombre, COUNT(film_id) AS films_title_len_gt12
+FROM actor
+	JOIN film_actor USING(actor_id)
+    JOIN film USING(film_id)
+WHERE length(title) > 12
+GROUP BY actor_id;
+
 -- 58:  Para cada ciudad, calcula la suma de pagos de 2005 y filtra las ciudades con total >= 300.
+
+SELECT city_id, city, SUM(amount) AS suma_pagos_2005
+FROM city
+	JOIN address USING(city_id)
+    JOIN staff USING(address_id)
+    JOIN payment USING(staff_id)
+WHERE payment_date = 2005
+GROUP BY city_id
+HAVING suma_pagos_2005 >= 300;
+
 -- 59:  Para cada categoría, cuenta cuántas películas tienen rating 'PG' o 'PG-13'.
+
+SELECT category_id, name, COUNT(film_id) AS films_pg_pg13
+FROM category
+	JOIN film_category USING(category_id)
+    JOIN film USING(film_id)
+WHERE rating IN ('PG', 'PG-13')
+GROUP BY category_id;
+
 -- 60:  Para cada cliente, calcula el total pagado en pagos procesados por el empleado 2.
 -- ==============================================
 -- SECCIÓN C) 20 CONSULTAS CON JOIN DE 4 TABLAS
