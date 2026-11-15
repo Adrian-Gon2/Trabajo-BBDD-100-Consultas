@@ -317,10 +317,47 @@ FROM language
 GROUP BY language_id;
 
 -- 41:  Para cada cliente, cuenta cuántos alquileres realizó en fines de semana (SÁB-DO) usando DAYOFWEEK (1=Domingo).
+
+SELECT customer_id, CONCAT(first_name, ' ', last_name) AS nombre, COUNT(rental_id) AS weekend_rentals
+FROM customer
+	JOIN rental USING(customer_id)
+WHERE DAYOFWEEK(rental_date) IN (1, 7)
+GROUP BY customer_id;
+
 -- 42:  Para cada actor, muestra el total de títulos distintos en los que participa (equivale a COUNT DISTINCT, sin subconsulta).
+
+SELECT actor_id, CONCAT(first_name, ' ', last_name) AS nombre, COUNT(DISTINCT film_id) AS total_peliculas
+FROM actor
+	JOIN film_actor USING(actor_id)
+    JOIN film USING(film_id)
+GROUP BY actor_id;
+
 -- 43:  Para cada ciudad, cuenta cuántos clientes residen ahí (customer -> address -> city).
+
+SELECT city_id, city, COUNT(customer_id) AS customers_in_city
+FROM city
+	JOIN address USING(city_id)
+    JOIN customer USING(address_id)
+GROUP BY city_id;
+
 -- 44:  Para cada categoría, muestra cuántos actores distintos participan en películas de esa categoría.
+
+SELECT category_id, c.name, COUNT(DISTINCT actor_id) AS actors_in_category
+FROM category c
+	JOIN film_category USING(category_id)
+    JOIN film USING(film_id)
+    JOIN film_actor USING(film_id)
+GROUP BY category_id;
+
 -- 45:  Para cada tienda, cuenta cuántas copias totales (inventario) tiene de películas en 2006.
+
+SELECT store_id, COUNT(inventory_id) AS copies_2006
+FROM store
+	JOIN inventory USING(store_id)
+    JOIN film USING(film_id)
+WHERE release_year = 2006
+GROUP BY store_id;
+
 -- 46:  Para cada cliente, suma el total pagado por alquileres cuyo empleado pertenece a la tienda 1.
 -- 47:  Para cada película, cuenta cuántos actores tienen el apellido de longitud >= 5.
 -- 48:  Para cada categoría, suma la duración total (length) de sus películas.
