@@ -224,7 +224,7 @@ GROUP BY category_id;
 
 -- 30:  Para cada tienda, cuenta cuántos alquileres totales se originan en su inventario.
 
-SELECT store_id, COUNT(rental_id) AS rentals_by_store_inventory
+SELECT store_id, COUNT(rental_id) AS rentals_by_store_inventoryhh
 FROM store
 	JOIN inventory USING(store_id)
     JOIN rental USING(inventory_id)
@@ -234,10 +234,46 @@ GROUP BY store_id;
 -- SECCIÓN B) 30 CONSULTAS CON JOIN DE 3 TABLAS
 -- ==============================================
 -- 31:  Para cada actor, cuenta cuántas películas tiene y muestra solo los que superan 15 películas.
+
+SELECT actor_id, CONCAT(first_name, ' ', last_name) AS nombre, COUNT(film_id) AS films_by_actor
+FROM actor
+	JOIN film_actor USING(actor_id)
+    JOIN film USING(film_id)
+GROUP BY actor_id
+HAVING films_by_actor > 15;
+
 -- 32:  Para cada categoría (por nombre), cuenta cuántas películas hay en esa categoría.
+
+SELECT category_id, name, COUNT(film_id) AS films_in_category
+FROM category
+	JOIN film_category USING(category_id)
+    JOIN film USING(film_id)
+GROUP BY category_id;
+
 -- 33:  Para cada película, cuenta cuántos alquileres se han hecho de sus copias.
+
+SELECT film_id, title, COUNT(rental_id) AS rentals_of_film
+FROM film
+	JOIN inventory USING(film_id)
+    JOIN rental USING(inventory_id)
+GROUP BY film_id;
+
 -- 34:  Para cada cliente, suma el importe pagado en 2005 y filtra clientes con total >= 150.
+
+SELECT customer_id, SUM(amount) AS suma_importe
+FROM customer
+	JOIN payment USING(customer_id)
+GROUP BY customer_id
+HAVING suma_importe >= 150;
+
 -- 35:  Para cada tienda, suma el importe cobrado por todos sus empleados.
+
+SELECT store_id, SUM(amount) AS revenue_by_store_staff
+FROM store
+	JOIN staff USING(store_id)
+    JOIN payment USING(staff_id)
+GROUP BY store_id;
+
 -- 36:  Para cada ciudad, cuenta cuántos empleados residen ahí (staff -> address -> city).
 -- 37:  Para cada ciudad, cuenta cuántas tiendas existen (store -> address -> city).
 -- 38:  Para cada actor, calcula la duración media de sus películas del año 2006.
