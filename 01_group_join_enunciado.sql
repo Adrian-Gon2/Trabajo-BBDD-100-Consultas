@@ -75,16 +75,50 @@ HAVING renta >= 30;
 
 -- 10:  Para cada cliente, muestra el total de pagos (suma en euros/dólares) que ha realizado.
 
-SELECT *
+SELECT customer_id, CONCAT(first_name, '', last_name), SUM(amount) AS amountTotal
 FROM customer
 	JOIN payment USING (customer_id)
+GROUP BY customer_id;
 
 -- 11:  Muestra los clientes cuyo importe total pagado es al menos 200.
+
+SELECT customer_id, CONCAT(first_name, '', last_name), SUM(amount) AS amountTotal
+FROM customer
+	JOIN payment USING (customer_id)
+GROUP BY customer_id
+HAVING amountTotal >= 200;
+
 -- 12:  Para cada empleado (staff), muestra el número de pagos que ha procesado.
+
+SELECT staff_id, CONCAT(first_name, '', last_name), COUNT(payment_id) AS  Pagos_Procesados
+FROM staff 
+	JOIN payment USING (staff_id)
+GROUP BY staff_id;
+
 -- 13:  Para cada empleado, muestra el importe total procesado.
+
+SELECT staff_id, CONCAT(first_name, '', last_name) AS nombre, SUM(amount) AS Total_importe
+FROM staff 
+	JOIN payment USING(staff_id)
+GROUP BY staff_id;
+
 -- 14:  Para cada tienda, cuenta cuántos artículos de inventario tiene.
+
+SELECT store_id, COUNT(inventory_id) AS cantidad_articulos
+FROM store
+	JOIN inventory USING(store_id)
+GROUP BY store_id;
+
 -- 15:  Para cada tienda, cuenta cuántos clientes tiene asignados.
+
+SELECT store_id, COUNT(cr.address_id) AS customers_in_store
+FROM store
+	JOIN customer cr USING(store_id)
+GROUP BY store_id;
+
 -- 16:  Para cada tienda, cuenta cuántos empleados (staff) tiene asignados.
+
+
 -- 17:  Para cada dirección (address), cuenta cuántas tiendas hay ubicadas ahí (debería ser 0/1 en datos estándar).
 -- 18:  Para cada dirección, cuenta cuántos empleados residen en esa dirección.
 -- 19:  Para cada dirección, cuenta cuántos clientes residen ahí.
