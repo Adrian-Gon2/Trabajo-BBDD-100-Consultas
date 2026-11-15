@@ -118,11 +118,40 @@ GROUP BY store_id;
 
 -- 16:  Para cada tienda, cuenta cuántos empleados (staff) tiene asignados.
 
+SELECT store_id, COUNT(staff_id) AS staff_in_store
+FROM store
+	JOIN staff USING(store_id)
+GROUP BY store_id;
+
 
 -- 17:  Para cada dirección (address), cuenta cuántas tiendas hay ubicadas ahí (debería ser 0/1 en datos estándar).
+
+SELECT address_id, address, COUNT(store_id) AS stores_here
+FROM address
+	JOIN store USING(address_id)
+GROUP BY address_id;
+
 -- 18:  Para cada dirección, cuenta cuántos empleados residen en esa dirección.
+
+SELECT address_id, address, COUNT(staff_id) AS staff_here
+FROM address
+	JOIN staff USING(address_id)
+GROUP BY address_id;
+
 -- 19:  Para cada dirección, cuenta cuántos clientes residen ahí.
+
+SELECT address_id, address, COUNT(customer_id) AS customer_here
+FROM address
+	JOIN customer USING (address_id)
+GROUP BY address_id;
+
 -- 20:  Para cada ciudad, cuenta cuántas direcciones hay registradas.
+
+SELECT city_id, city, COUNT(address_id) AS addresses_in_city
+FROM city
+	JOIN address USING (city_id)
+GROUP BY city_id;
+
 -- 21:  Para cada país, cuenta cuántas ciudades existen.
 -- 22:  Para cada idioma, calcula la duración media de películas y muestra solo los idiomas con media entre 90 y 120 inclusive.
 -- 23:  Para cada película, cuenta el número de alquileres que se han hecho de cualquiera de sus copias (usando inventario).
