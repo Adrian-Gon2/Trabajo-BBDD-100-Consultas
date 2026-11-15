@@ -275,10 +275,47 @@ FROM store
 GROUP BY store_id;
 
 -- 36:  Para cada ciudad, cuenta cuántos empleados residen ahí (staff -> address -> city).
+
+SELECT city_id, city, COUNT(staff_id) AS staff_in_city
+FROM city
+	JOIN address USING(city_id)
+    JOIN staff USING(address_id)
+GROUP BY city_id;
+
 -- 37:  Para cada ciudad, cuenta cuántas tiendas existen (store -> address -> city).
+
+SELECT city_id, city, COUNT(store_id) AS stores_in_city
+FROM city
+	JOIN address USING(city_id)
+    JOIN store USING(address_id)
+GROUP BY city_id;
+
 -- 38:  Para cada actor, calcula la duración media de sus películas del año 2006.
+
+SELECT actor_id, CONCAT(first_name, ' ', last_name) AS nombre, AVG(length) AS duracion_media
+FROM actor
+	JOIN film_actor USING(actor_id)
+    JOIN film f USING(film_id)
+WHERE release_year = 2006
+GROUP BY actor_id;
+
 -- 39:  Para cada categoría, calcula la duración media y muestra solo las que superan 120.
+
+SELECT category_id, name, AVG(length) AS duracion_media
+FROM category
+	JOIN film_category USING(category_id)
+    JOIN film USING(film_id)
+GROUP BY category_id
+HAVING duracion_media > 120;
+
 -- 40:  Para cada idioma, suma las tarifas de alquiler (rental_rate) de todas sus películas.
+
+SELECT language_id, name, SUM(rental_rate) AS Suma_tarifas
+FROM language
+	JOIN film USING(language_id)
+    JOIN inventory USING(film_id)
+GROUP BY language_id;
+
 -- 41:  Para cada cliente, cuenta cuántos alquileres realizó en fines de semana (SÁB-DO) usando DAYOFWEEK (1=Domingo).
 -- 42:  Para cada actor, muestra el total de títulos distintos en los que participa (equivale a COUNT DISTINCT, sin subconsulta).
 -- 43:  Para cada ciudad, cuenta cuántos clientes residen ahí (customer -> address -> city).
