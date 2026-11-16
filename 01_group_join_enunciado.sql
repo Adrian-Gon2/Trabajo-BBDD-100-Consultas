@@ -738,10 +738,53 @@ WHERE TIME(payment_date) BETWEEN '00:00:00' AND '06:00:00'
 GROUP BY staff_id;
 
 -- 86:  Para cada actor, cuenta cuántas de sus películas tienen un título que contiene la palabra 'LOVE' (mayúsculas).
+
+SELECT actor_id, CONCAT(first_name, ' ', last_name) AS nombre, COUNT(film_id) AS films_with_love
+FROM actor
+	JOIN film_actor USING(actor_id)
+    JOIN film USING(film_id)
+WHERE title LIKE '%LOVE%'
+GROUP BY actor_id  
+ORDER BY actor_id ASC;
+
 -- 87:  Para cada idioma, muestra el total de pagos de alquileres de películas en ese idioma.
+
+SELECT language_id, name, SUM(amount) AS total_amount_in_language
+FROM language
+	JOIN film USING(language_id)
+    JOIN inventory USING(film_id)
+    JOIN rental USING(inventory_id)
+    JOIN payment USING (rental_id)
+GROUP BY language_id;
+
 -- 88:  Para cada cliente, cuenta en cuántos días distintos de 2005 realizó algún alquiler.
+
+SELECT customer_id, CONCAT(first_name, ' ', last_name) AS nombre, COUNT(DISTINCT DATE(rental_date)) AS active_days_2005
+FROM customer
+	JOIN rental USING(customer_id)
+WHERE YEAR(rental_date) = 2005
+GROUP BY customer_id;
+
 -- 89:  Para cada categoría, calcula la longitud media de títulos (número de caracteres) de sus películas alquiladas.
+
+SELECT category_id, c.name, AVG(length(title)) AS avg_title_len_rented
+FROM category c 
+	JOIN film_category USING(category_id)
+    JOIN film USING(film_id)
+    JOIN inventory USING(film_id)
+    JOIN rental USING(inventory_id)
+GROUP BY category_id;
+
 -- 90:  Para cada tienda, cuenta cuántos clientes distintos alquilaron en el primer trimestre de 2006 (enero-marzo).
+
+SELECT store_id, COUNT(DISTINCT c.customer_id) AS distinct_customers_q1_2006
+FROM store
+	JOIN customer c USING(store_id)
+    JOIN rental USING(customer_id)
+    JOIN payment USING (rental_id)
+WHERE YEAR(rental_date) = 2006 AND MONTH(rental_date) IN (1, 2, 3)
+GROUP BY store_id; 
+
 -- 91:  Para cada país, cuenta cuántas categorías diferentes han sido alquiladas por clientes residentes en ese país.
 -- 92:  Para cada cliente, muestra el importe medio de sus pagos redondeado a 2 decimales, solo si ha hecho al menos 10 pagos.
 -- 93:  Para cada categoría, muestra el número de películas con replacement_cost > 20 que hayan sido alquiladas al menos una vez.
