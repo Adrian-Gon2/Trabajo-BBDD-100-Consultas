@@ -644,8 +644,31 @@ FROM language
 GROUP BY language_id;
 
 -- 76:  Para cada país, cuenta cuántas tiendas hay (país->ciudad->address->store).
+
+SELECT country_id, country, COUNT(store_id) AS stores_in_country
+FROM country
+	JOIN city USING(country_id)
+    JOIN address USING(city_id)
+    JOIN store USING(address_id)
+GROUP BY country_id;
+
 -- 77:  Para cada cliente, cuenta los alquileres en los que la devolución (return_date) fue el mismo día del alquiler.
+
+SELECT customer_id, CONCAT(first_name, ' ', last_name) AS nombre, COUNT(rental_id) AS same_day_returns
+FROM rental
+	JOIN customer USING(customer_id)
+WHERE DATE(rental_date) = DATE(return_date)
+GROUP BY customer_id;
+
 -- 78:  Para cada tienda, cuenta cuántos clientes distintos realizaron pagos en 2005.
+
+SELECT store_id, COUNT(DISTINCT customer_id) AS distinct_customers_2005
+FROM store
+	JOIN staff USING(store_id)
+    JOIN payment USING(staff_id)
+WHERE YEAR(payment_date) = 2005
+GROUP BY store_id;
+
 -- 79:  Para cada categoría, cuenta cuántas películas con título de longitud > 15 han sido alquiladas.
 
 SELECT category_id, name, COUNT(film_id) AS rentals_long_title
@@ -658,6 +681,15 @@ WHERE length(title) > 15
 GROUP BY category_id;
 
 -- 80:  Para cada país, suma los pagos procesados por los empleados de las tiendas ubicadas en ese país.
+
+SELECT country_id, country, SUM(amount) AS revenue_by_country_staff
+FROM country
+	JOIN city USING(country_id)
+    JOIN address USING(city_id)
+    JOIN staff USING(address_id)
+    JOIN payment USING(staff_id)
+GROUP BY country_id;
+
 -- ==============================================
 -- SECCIÓN D) 20 CONSULTAS EXTRA (DIFICULTAD +), <=4 JOINS
 -- ==============================================
