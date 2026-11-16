@@ -498,10 +498,52 @@ GROUP BY customer_id;
 -- SECCIÓN C) 20 CONSULTAS CON JOIN DE 4 TABLAS
 -- ==============================================
 -- 61:  Para cada ciudad, cuenta cuántos clientes hay y muestra solo ciudades con 10 o más clientes.
+
+SELECT city_id, city, COUNT(customer_id) AS 10_clientes_en_ciudad
+FROM city
+	JOIN address USING(city_id)
+    JOIN customer USING(address_id)
+GROUP BY city_id
+HAVING 10_clientes_en_ciudad >= 10;
+
 -- 62:  Para cada actor, cuenta cuántos alquileres totales suman todas sus películas.
+
+SELECT actor_id, CONCAT(first_name, ' ', last_name) AS nombre,COUNT(rental_id) AS rentals_for_actor
+FROM actor 
+	JOIN film_actor USING(actor_id)
+    JOIN inventory USING(film_id)
+    JOIN rental USING(inventory_id)
+GROUP BY actor_id;
+
 -- 63:  Para cada categoría, suma los importes pagados derivados de películas de esa categoría.
+
+SELECT category_id, name, SUM(amount) AS revenue_by_category
+FROM category
+	JOIN film_category USING(category_id)
+    JOIN inventory USING(film_id)
+    JOIN rental USING(inventory_id)
+    JOIN payment USING(rental_id)
+GROUP BY category_id;
+
 -- 64:  Para cada ciudad, suma los importes pagados por clientes residentes en esa ciudad en 2005.
+
+SELECT city_id, city, SUM(amount) AS total_paid_2005
+FROM city
+    JOIN address USING(city_id)
+    JOIN customer USING(address_id)
+    JOIN payment USING(customer_id)
+WHERE YEAR(payment_date) = 2005
+GROUP BY city_id;
+
 -- 65:  Para cada tienda, cuenta cuántos actores distintos aparecen en las películas de su inventario.
+
+SELECT store_id, COUNT(DISTINCT actor_id) AS distinct_actors_in_store_inventory
+FROM store
+    JOIN inventory USING(store_id)
+    JOIN film_actor USING(film_id)
+    JOIN actor USING(actor_id)
+GROUP BY store_id;
+
 -- 66:  Para cada idioma, cuenta cuántos alquileres totales se han hecho de películas en ese idioma.
 -- 67:  Para cada cliente, cuenta en cuántos meses distintos de 2005 realizó pagos (meses distintos).
 -- 68:  Para cada categoría, calcula la duración media de las películas alquiladas (considerando solo películas alquiladas).
