@@ -545,10 +545,51 @@ FROM store
 GROUP BY store_id;
 
 -- 66:  Para cada idioma, cuenta cuántos alquileres totales se han hecho de películas en ese idioma.
+
+SELECT language_id, name, COUNT(rental_id) AS rentals_in_language
+FROM language
+    JOIN film USING(language_id)
+    JOIN inventory USING(film_id)
+    JOIN rental USING(inventory_id)
+GROUP BY language_id;
+
 -- 67:  Para cada cliente, cuenta en cuántos meses distintos de 2005 realizó pagos (meses distintos).
+
+SELECT customer_id, CONCAT(first_name, ' ', last_name) AS nombre, COUNT(DISTINCT MONTH(payment_date)) AS active_months_2005
+FROM customer
+    JOIN payment USING(customer_id)
+WHERE YEAR(payment_date) = 2005
+GROUP BY customer_id;
+
 -- 68:  Para cada categoría, calcula la duración media de las películas alquiladas (considerando solo películas alquiladas).
+
+SELECT category_id, name, AVG(length) AS duracion_media
+FROM category
+    JOIN film_category USING(category_id)
+    JOIN film USING(film_id)
+    JOIN inventory USING(film_id)
+    JOIN rental USING(inventory_id)
+GROUP BY category_id;
+
 -- 69:  Para cada país, cuenta cuántos clientes hay (country -> city -> address -> customer).
+
+SELECT country_id, country, COUNT(customer_id) AS Numero_clientes
+FROM country
+    JOIN city USING(country_id)
+    JOIN address USING(city_id)
+    JOIN customer USING(address_id)
+GROUP BY country_id;
+
 -- 70:  Para cada país, suma los importes pagados por sus clientes.
+
+SELECT country_id, country, SUM(amount) AS Importe_Cliente
+FROM country
+    JOIN city USING(country_id)
+    JOIN address USING(city_id)
+    JOIN customer USING(address_id)
+    JOIN payment USING(customer_id)
+GROUP BY country_id;
+
 -- 71:  Para cada tienda, cuenta cuántas categorías distintas existen en su inventario.
 -- 72:  Para cada tienda, suma la recaudación por categoría (resultado agregado por tienda y categoría).
 -- 73:  Para cada actor, cuenta en cuántas tiendas distintas se han alquilado sus películas.
