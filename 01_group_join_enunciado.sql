@@ -694,10 +694,49 @@ GROUP BY country_id;
 -- SECCIÓN D) 20 CONSULTAS EXTRA (DIFICULTAD +), <=4 JOINS
 -- ==============================================
 -- 81:  Para cada cliente, muestra el total pagado con IVA teórico del 21% aplicado (total*1.21), redondeado a 2 decimales.
+
+SELECT customer_id, CONCAT(first_name, ' ', last_name) AS nombre, ROUND(SUM(amount) * 1.21, 2) AS total_IVA_21
+FROM customer
+	JOIN payment USING(customer_id)
+GROUP BY customer_id;
+
 -- 82:  Para cada hora del día (0-23), cuenta cuántos alquileres se iniciaron en esa hora.
+
+SELECT HOUR(rental_date) AS hora, COUNT(rental_id) AS rentals_in_hour
+FROM rental
+GROUP BY HOUR(rental_date)
+ORDER BY hora ASC;
+
 -- 83:  Para cada tienda, muestra la media de length de las películas alquiladas en 2005 y filtra las tiendas con media >= 100.
+
+SELECT store_id, AVG(length) AS media
+FROM store
+	JOIN inventory USING(store_id)
+    JOIN film USING(film_id)
+    JOIN rental USING(inventory_id)
+WHERE YEAR(rental_date) = 2005
+GROUP BY store_id
+HAVING media >= 100;
+
 -- 84:  Para cada categoría, muestra la media de replacement_cost de las películas alquiladas un domingo.
+
+SELECT category_id, c.name, AVG(replacement_cost) AS media_replacement_cost
+FROM category c
+	JOIN film_category USING(category_id)
+    JOIN film USING(film_id)
+    JOIN inventory USING(film_id)
+    JOIN rental USING(inventory_id)
+WHERE DAYOFWEEK(rental_date) IN (1)
+GROUP BY category_id;
+
 -- 85:  Para cada empleado, muestra el importe total por pagos realizados entre las 00:00 y 06:00 (inclusive 00:00, exclusivo 06:00).
+
+SELECT staff_id, CONCAT(first_name, ' ', last_name) AS nombre, SUM(amount) AS total_pagos
+FROM staff 
+INNER JOIN payment  USING (staff_id)
+WHERE TIME(payment_date) BETWEEN '00:00:00' AND '06:00:00'
+GROUP BY staff_id;
+
 -- 86:  Para cada actor, cuenta cuántas de sus películas tienen un título que contiene la palabra 'LOVE' (mayúsculas).
 -- 87:  Para cada idioma, muestra el total de pagos de alquileres de películas en ese idioma.
 -- 88:  Para cada cliente, cuenta en cuántos días distintos de 2005 realizó algún alquiler.
