@@ -838,8 +838,53 @@ GROUP BY actor_id
 HAVING COUNT(DISTINCT customer_id) >= 5;
 
 -- 96:  Para cada idioma, muestra el número de películas cuyo título empieza por la letra 'A' y que han sido alquiladas.
+
+SELECT language_id, name, COUNT(DISTINCT film_id) AS numero_peliculas
+FROM language
+    JOIN film USING(language_id)
+    JOIN inventory USING(film_id)
+    JOIN rental USING(inventory_id)
+WHERE title LIKE 'A%'
+GROUP BY language_id;
+
 -- 97:  Para cada país, suma el importe total de pagos realizados por clientes residentes y filtra países con total >= 1000.
+
+SELECT country_id, country, SUM(p.amount) importe_total
+FROM country
+    JOIN city USING(country_id)
+    JOIN address USING(city_id)
+    JOIN customer USING(address_id)
+    JOIN payment p USING(customer_id)
+GROUP BY country_id
+HAVING importe_total >= 1000;
+
 -- 98:  Para cada cliente, cuenta cuántos días han pasado entre su primer y su último alquiler en 2005 (diferencia de fechas), mostrando solo clientes con >= 5 alquileres en 2005.
+
+SELECT customer_id, CONCAT(first_name, ' ', last_name) AS nombre, DATEDIFF(MAX(rental_date), MIN(rental_date)) AS days_between_first_last_2005
+FROM customer
+    JOIN rental USING(customer_id)
+WHERE YEAR(rental_date) = 2005
+GROUP BY customer_id
+HAVING COUNT(rental_id) >= 5;
+
 --     (Se evita subconsulta calculando sobre el conjunto agrupado por cliente y usando MIN/MAX de rental_date en 2005).
 -- 99:  Para cada tienda, muestra la media de importes cobrados por transacción en el año 2006, con dos decimales.
+
+SELECT store_id, ROUND(AVG(amount), 2) AS media_importe
+FROM store
+    JOIN staff USING(store_id)
+    JOIN payment USING(staff_id)
+WHERE YEAR(payment_date) = 2006
+GROUP BY store_id;
+
 -- 100:  Para cada categoría, calcula la media de duración (length) de películas alquiladas en 2006 y ordénalas descendentemente por dicha media.
+
+SELECT category_id, c.name, AVG(length) AS duracion_media
+FROM category c
+    JOIN film_category USING(category_id)
+    JOIN film USING(film_id)
+    JOIN inventory USING(film_id)
+    JOIN rental USING(inventory_id)
+WHERE YEAR(rental_date) = 2006
+GROUP BY category_id
+ORDER BY duracion_media DESC;
